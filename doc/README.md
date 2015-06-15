@@ -14,6 +14,12 @@ The getting started guide assumes a default file system layout.
   scripts/initial_setup.sh
   follow the script's instructions
 
+Remember to setup git correctly for each user that needs to commit.
+Among others, set the identity:
+
+  git config --global user.email "you@example.com"
+  git config --global user.name "Your Name"
+
 basic machine setup
 ===================
 
