@@ -5,9 +5,9 @@ source $RSI_SCRIPTS/config.sh
 # mostly identical, but have important small differences. At a later
 # stage, we may want to unify this.
 #$RSI_SCRIPTS/daily_tarball_libestr.sh
-$RSI_SCRIPTS/daily_tarball_liblogging.sh
+#$RSI_SCRIPTS/daily_tarball_liblogging.sh
+#$RSI_SCRIPTS/daily_tarball_liblognorm.sh
+#$RSI_SCRIPTS/daily_tarball_librelp.sh
+$RSI_SCRIPTS/daily_tarball_rsyslog.sh
 exit 1
-liblognorm_daily_tarball.sh
-librelp_daily_tarball.sh
-rsyslog_daily_tarball.sh
 #$INFRAHOME/scripts/auto_daily.sh
