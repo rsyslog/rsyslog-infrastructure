@@ -66,8 +66,10 @@ Important notes on repo base directories
 Current Scripts
 ---------------
 The current scripts base on Adiscon's internal scripts. As such, they
-are generalized and need to be enhanced for the team effort.
+are generalized and need to be enhanced for the team effort. Everything
+is currently done on Ubuntu 14.04LTS, so package names apply to
+that platform, only.
 
 They require the following prequisites:
 
-sudo apt-get install mutt
+sudo apt-get install mutt devscripts debhelper

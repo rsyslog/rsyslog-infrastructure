@@ -12,4 +12,4 @@ $RSI_SCRIPTS/daily_tarball_librelp.sh
 $RSI_SCRIPTS/daily_tarball_rsyslog.sh
 
 # initiate package build
-#$INFRAHOME/repo/rsyslog-pkg-ubuntu/auto_daily.sh
+$INFRAHOME/repo/rsyslog-pkg-ubuntu/scripts/auto_daily.sh
