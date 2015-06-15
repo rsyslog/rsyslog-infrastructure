@@ -1,6 +1,9 @@
 Getting Started
 ===============
+The getting started guide assumes a default file system layout.
 
+* set INFRAHOME and RSI_SCRIPTS environment variables in 
+  users .bashrc for those that need it (at least rs_infra user)
 * install git
 * create rs_infra user & related groups
 * cd into it's home directory and change permissions
@@ -8,7 +11,8 @@ Getting Started
 * clone this repository:
   mkdir repo;cd repo;git clone https://github.com/rsyslog/rsyslog-infrastructure.git;cd rsyslog-infrastructure
 * you are now inside rsyslog-infrastructure, run initial setup:
-  ./initial_setup.sh
+  scripts/initial_setup.sh
+  follow the script's instructions
 
 basic machine setup
 ===================
@@ -31,3 +35,33 @@ rs_infra        infrastructure owner, used for cron jobs
 Groups
 ------
 infrastructure  has access to rs_infra
+
+Environment Variables
+---------------------
+The following variables MUST be set for each user in .bashrc because
+they set "anchor points" for the rest of the system. If not set,
+scripts will FAIL!
+
+INFRAHOME       home directory for the infrastructure
+RSI_SCRIPTS     directory with the infrastructure scripts
+                usually $INFRAHOME/repo/rsyslog-infrastructure/scripts
+
+Config Parameters
+-----------------
+Set them by modifying $INFRAHOME/repo/rsyslog-infrastructure/scripts
+That file contains instructions on what the parameters mean.
+
+Important notes on repo base directories
+---------------------------------------
+* at any time, only a single tarball must exists inside the repository
+* the tarball inside the repo MUST match the installed version in 
+  ./local
+
+Current Scripts
+---------------
+The current scripts base on Adiscon's internal scripts. As such, they
+are generalized and need to be enhanced for the team effort.
+
+They require the following prequisites:
+
+sudo apt-get install mutt
