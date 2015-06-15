@@ -22,7 +22,7 @@ rm *.tar.gz
 sed s/\\.master\]/\\.`git log --pretty=format:'%H' -n 1|cut -c 1-12`\]/ < configure.ac > configure.ac.new
 mv configure.ac.new configure.ac
 echo pre configure
-rsyslog_configure.sh
+$RSI_SCRIPTS/rsyslog_configure.sh
 echo trying make dist
 rm -rf *.tar.gz
 make dist
