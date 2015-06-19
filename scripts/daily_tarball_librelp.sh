@@ -29,6 +29,11 @@ if [ $? -ne 0 ]; then
     exit 1
 fi
 
+# work-around fix permissions
+# TODO: how to handle script abort? Any way to avoid this work-around here?
+chmod -R g+w .
+chgrp -R infrastructure .
+
 # install in our local build environment
 make install
 

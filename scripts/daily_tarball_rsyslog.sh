@@ -23,6 +23,13 @@ sed s/\\.master\]/\\.`git log --pretty=format:'%H' -n 1|cut -c 1-12`\]/ < config
 mv configure.ac.new configure.ac
 echo pre configure
 $RSI_SCRIPTS/rsyslog_configure.sh
+
+# work-around fix permissions
+# TODO: how to handle script abort? Any way to avoid this work-around here?
+chmod -R g+w .
+chgrp -R infrastructure .
+# end work-around
+
 echo trying make dist
 rm -rf *.tar.gz
 make dist
