@@ -72,4 +72,4 @@ that platform, only.
 
 They require the following prequisites:
 
-sudo apt-get install mutt devscripts debhelper
+sudo apt-get install mutt devscripts debhelper dh-autoreconf cdbs
