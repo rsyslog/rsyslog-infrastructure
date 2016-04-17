@@ -13,5 +13,8 @@ export RS_NOTIFY_EMAIL=release-team@lists.adiscon.com
 #   currently (badly?) solved by an empty passphrase
 export PACKAGE_SIGNING_KEY_ID=C2751450
 
+# which PPA to put to?
+export PPA=ppa:adiscon
+
 # do NOT make any changes past this point
 export PKG_CONFIG_PATH=$INFRAHOME/local/lib/pkgconfig
