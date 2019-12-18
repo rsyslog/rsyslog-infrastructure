@@ -20,7 +20,7 @@ rm *.tar.gz
 sed s/\\.master\]/\\.`git log --pretty=format:'%H' -n 1|cut -c 1-12`\]/ < configure.ac > configure.ac.new
 mv configure.ac.new configure.ac
 
-autoreconf -fvi && ./configure --prefix=$INFRAHOME/local --disable-journal && make || exit $?
+autoreconf -fvi && ./configure --prefix=$INFRAHOME/local --disable-man-pages --disable-journal && make || exit $?
 
 echo trying make dist
 rm -rf *.tar.gz
