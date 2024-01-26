@@ -2,13 +2,22 @@
 # Copyright (C) 2015 by Rainer Gerhards. Released under ASL 2.0
 source $RSI_SCRIPTS/config.sh
 
+# Support custom branch
+GITBRANCH=${1:-"master"}
+echo Get DAILY TARBALL for RSYSLOG branch $GITBRANCH
+
 cd $INFRAHOME/repo/liblogging
-git checkout -f master
-git checkout master
+git reset --hard
+git pull --all
+
+echo pre checkout
+make distclean
+git checkout -f $GITBRANCH
 if [ $? -ne 0 ]; then
     git checkout -f master |& mutt -s "liblogging tarball: git checkout failed!" $RS_NOTIFY_EMAIL
     exit 1
 fi
+echo pre pull
 git pull
 if [ $? -ne 0 ]; then
     git pull |& mutt -s "liblogging tarball: git pull failed!" $RS_NOTIFY_EMAIL
@@ -17,6 +26,11 @@ fi
 
 # we need to rename the version
 rm *.tar.gz
+
+make distclean
+autoreconf -vfi
+./configure
+
 sed s/\\.master\]/\\.`git log --pretty=format:'%H' -n 1|cut -c 1-12`\]/ < configure.ac > configure.ac.new
 mv configure.ac.new configure.ac
 
@@ -50,4 +64,4 @@ echo tarfile for upload: $TARFILE
 #sudo make install
 
 # reset version number changes
-git checkout -f master
+git checkout -f $GITBRANCH
