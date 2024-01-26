@@ -18,6 +18,7 @@ fi
 # we need to rename the version
 rm *.tar.gz
 sed s/\\.master\]/\\.`git log --pretty=format:'%H' -n 1|cut -c 1-12`\]/ < configure.ac > configure.ac.new
+sed s/\\.master\]/\\.`git log --pretty=format:'%H' -n 1|cut -c 1-12`'~'`date +%Y%m%d%H%M%S`\]/ < configure.ac > configure.ac.new
 mv configure.ac.new configure.ac
 
 autoreconf -fvi && ./configure --prefix=$INFRAHOME/local && make || exit $?
