@@ -3,6 +3,7 @@
 source $RSI_SCRIPTS/config.sh
 
 cd $INFRAHOME/repo/liblogging
+make distclean
 git checkout -f master
 git checkout master
 if [ $? -ne 0 ]; then
@@ -17,6 +18,11 @@ fi
 
 # we need to rename the version
 rm *.tar.gz
+
+make distclean
+autoreconf -vfi
+./configure
+
 sed s/\\.master\]/\\.`git log --pretty=format:'%H' -n 1|cut -c 1-12`\]/ < configure.ac > configure.ac.new
 mv configure.ac.new configure.ac
 

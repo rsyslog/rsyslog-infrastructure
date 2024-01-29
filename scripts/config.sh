@@ -11,7 +11,7 @@ export RS_NOTIFY_EMAIL=release-team@lists.adiscon.com
 # - the rs_infra user for the daily cron jobs
 # - it must be automatically obtained during a cron run, this is
 #   currently (badly?) solved by an empty passphrase
-export PACKAGE_SIGNING_KEY_ID=C2751450
+export PACKAGE_SIGNING_KEY_ID=60A6DC05CFD77E25BFB74F0F8B4ED6BFE8EDD305
 
 # which PPA to put to?
 export PPA=ppa:adiscon
