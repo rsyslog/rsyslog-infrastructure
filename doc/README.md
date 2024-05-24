@@ -67,9 +67,42 @@ Current Scripts
 ---------------
 The current scripts base on Adiscon's internal scripts. As such, they
 are generalized and need to be enhanced for the team effort. Everything
-is currently done on Ubuntu 14.04LTS, so package names apply to
+is currently done on Ubuntu 22.04LTS, so package names apply to
 that platform, only.
 
 They require the following prequisites:
 
 sudo apt-get install mutt devscripts debhelper dh-autoreconf cdbs
+
+Daily Builds and/or custom launchpad reposities package builds
+--------------------------------------------------------------
+Run *./scripts/daily_builds.sh* to build all libraries and rsyslog from current
+master branches and publish to launchpad.
+the default build settings.
+
+Run *./scripts/daily_builds_project.sh rsyslog* to build only one project
+from *master* branch and publish to default launchpad repository.
+
+Run *./scripts/daily_builds_project.sh rsyslog experimental* to build only one project
+from *master* branch and publish to *experimental* launchpad repository.
+
+Run *./scripts/daily_builds_project.sh rsyslog experimental v8-stable* to build only one project
+from *master* branch, use the *v8-stable* debian files and
+publish to *experimental* launchpad repository.
+
+Run *./scripts/daily_builds_project.sh rsyslog experimental/experimental v8-stable*
+to build only one project from *experimental* branch, use the *v8-stable* debian files and
+publish to *experimental* launchpad repository.
+
+Run *./scripts/daily_builds_project.sh rsyslog experimental/experimental v8-stable 20240516150808*
+to build only one project from *experimental* branch, use the *v8-stable* debian files and
+publish to *experimental* launchpad repository and overwritting the Debian version number from
+changelog with *20240516150808*. This is only needed for package developing.
+
+Build all libraries and rsyslog for a custom laucnhpad repository:
+./scripts/daily_builds_project.sh libestr experimental v8-stable
+./scripts/daily_builds_project.sh liblogging experimental v8-stable
+./scripts/daily_builds_project.sh liblognorm experimental v8-stable
+./scripts/daily_builds_project.sh libfastjson experimental v8-stable
+./scripts/daily_builds_project.sh librelp experimental v8-stable
+./scripts/daily_builds_project.sh rsyslog experimental/experimental v8-stable

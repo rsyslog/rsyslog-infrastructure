@@ -2,10 +2,24 @@
 echo check buildenv
 source $RSI_SCRIPTS/config.sh
 
+# Support custom branch
+GITBRANCH=${1:-"master"}
+echo Get DAILY TARBALL for RSYSLOG branch $GITBRANCH
+
+CUSTOMBUILD=${2:-""}
+
+# Prepend an underscore if CUSTOMBUILD is not empty
+if [ -n "$CUSTOMBUILD" ]; then
+    CUSTOMBUILD="_$CUSTOMBUILD"
+fi
+echo CUSTOMBUILD if any: $CUSTOMBUILD
+
 cd $INFRAHOME/repo/rsyslog
-make distclean
+git reset --hard
+git pull --all
+
 echo pre checkout
-git checkout -f master
+git checkout -f $GITBRANCH
 if [ $? -ne 0 ]; then
     git pull |& mutt -s "rsyslog tarball: git checkout failed!" $RS_NOTIFY_EMAIL
     exit 1
@@ -17,10 +31,19 @@ if [ $? -ne 0 ]; then
     exit 1
 fi
 
-# we need to rename the version
+# rm existing archives
 rm *.tar.gz
-sed s/\\.master\]/\\.`git log --pretty=format:'%H' -n 1|cut -c 1-12`\]/ < configure.ac > configure.ac.new
-mv configure.ac.new configure.ac
+
+make distclean
+autoreconf -vfi
+./configure
+
+# we need to rename the version
+sed -i s/\\.master\]/\\.`git log --pretty=format:'%H' -n 1|cut -c 1-12`$CUSTOMBUILD\]/g configure.ac
+
+# We need to add tar-ustar to AM_INIT_AUTOMAKE! Fixed error with "tar: file name is too long (max 99)"
+sed -i 's/AM_INIT_AUTOMAKE(\[subdir-objects\])/AM_INIT_AUTOMAKE([subdir-objects 1.9 tar-ustar])/g' configure.ac
+
 echo pre configure
 $RSI_SCRIPTS/rsyslog_configure.sh
 
@@ -46,4 +69,4 @@ echo tarfile for upload: $TARFILE
 #scp -p $TARFILE download.rsyslog.com:/home/adisconweb/www/wordpress-mu/wp-content/blogs.dir/11/files/download/rsyslog/rsyslog-daily.tar.gz
 
 # reset version number changes
-git checkout -f master
+git checkout -f $GITBRANCH

@@ -1,13 +1,23 @@
 #! /bin/bash
+# Copyright (C) 2015 by Rainer Gerhards. Released under ASL 2.0
 source $RSI_SCRIPTS/config.sh
 
+# Support custom branch
+GITBRANCH=${1:-"master"}
+echo Get DAILY TARBALL for RSYSLOG branch $GITBRANCH
+
 cd $INFRAHOME/repo/libgt
+git reset --hard
+git pull --all
+
+echo pre checkout
 make distclean
-git checkout -f master
+git checkout -f $GITBRANCH
 if [ $? -ne 0 ]; then
     git checkout master |& mutt -s "libgt tarball: git checkout failed!" $RS_NOTIFY_EMAIL
     exit 1
 fi
+echo pre pull
 git pull
 if [ $? -ne 0 ]; then
     git pull |& mutt -s "libgt tarball: git pull failed!" $RS_NOTIFY_EMAIL
@@ -45,5 +55,4 @@ echo tarfile for upload: $TARFILE
 #scp -p $TARFILE download.rsyslog.com:/home/adisconweb/www/wordpress-mu/wp-content/blogs.dir/11/files/download/rsyslog/libgt-daily.tar.gz
 
 # reset version number changes
-git checkout -f master
-
+git checkout -f $GITBRANCH
