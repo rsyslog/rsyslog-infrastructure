@@ -11,7 +11,6 @@ git reset --hard
 git pull --all
 
 echo pre checkout
-make distclean
 git checkout -f $GITBRANCH
 if [ $? -ne 0 ]; then
     git checkout master |& mutt -s "libfastjson tarball: git checkout failed!" $RS_NOTIFY_EMAIL
@@ -21,11 +20,13 @@ echo pre pull
 git pull
 if [ $? -ne 0 ]; then
     git pull |& mutt -s "libfastjson tarball: git pull failed!" $RS_NOTIFY_EMAIL 
-       exit 1
+    exit 1
 fi
 
 # we need to rename the version
 rm *.tar.gz
+
+# we need to rename the version
 sed s/\\.master\]/\\.`git log --pretty=format:'%H' -n 1|cut -c 1-12`\]/ < configure.ac > configure.ac.new
 mv configure.ac.new configure.ac
 
@@ -33,7 +34,11 @@ autoreconf -fvi && ./configure --prefix=$INFRAHOME/local && make || exit $?
 
 echo trying make dist
 rm -rf *.tar.gz
-make dist
+
+# Separate clean and dist and use Verbose output
+make clean
+make dist V=1
+#make distclean
 if [ $? -ne 0 ]; then
     make dist |& mutt -s "libfastjson tarball: make dist failed" $RS_NOTIFY_EMAIL 
     exit 1

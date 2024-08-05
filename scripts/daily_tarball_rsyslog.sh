@@ -34,9 +34,8 @@ fi
 # rm existing archives
 rm *.tar.gz
 
-make distclean
-autoreconf -vfi
-./configure
+#autoreconf -vfi
+#./configure
 
 # we need to rename the version
 sed -i s/\\.master\]/\\.`git log --pretty=format:'%H' -n 1|cut -c 1-12`$CUSTOMBUILD\]/g configure.ac
@@ -55,6 +54,11 @@ chgrp -R infrastructure .
 
 echo trying make dist
 rm -rf *.tar.gz
+
+# Separate clean and dist and use Verbose output
+make clean
+make dist V=1
+#make distclean
 make dist
 if [ $? -ne 0 ]; then
     make dist |& mutt -s "rsyslog tarball: make dist failed" $RS_NOTIFY_EMAIL
