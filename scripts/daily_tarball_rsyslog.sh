@@ -3,7 +3,7 @@ echo check buildenv
 source $RSI_SCRIPTS/config.sh
 
 # Support custom branch
-GITBRANCH=${1:-"master"}
+GITBRANCH=${1:-"main"}
 echo Get DAILY TARBALL for RSYSLOG branch $GITBRANCH
 
 CUSTOMBUILD=${2:-""}
@@ -18,7 +18,7 @@ cd $INFRAHOME/repo/rsyslog
 git reset --hard
 git pull --all
 
-echo pre checkout
+echo pre checkout branch $GITBRANCH
 git checkout -f $GITBRANCH
 if [ $? -ne 0 ]; then
     git pull |& mutt -s "rsyslog tarball: git checkout failed!" $RS_NOTIFY_EMAIL
@@ -38,7 +38,7 @@ rm *.tar.gz
 #./configure
 
 # we need to rename the version
-sed -i s/\\.master\]/\\.`git log --pretty=format:'%H' -n 1|cut -c 1-12`$CUSTOMBUILD\]/g configure.ac
+sed -i s/\\.daily\]/\\.`git log --pretty=format:'%H' -n 1|cut -c 1-12`$CUSTOMBUILD\]/g configure.ac
 
 # We need to add tar-ustar to AM_INIT_AUTOMAKE! Fixed error with "tar: file name is too long (max 99)"
 sed -i 's/AM_INIT_AUTOMAKE(\[subdir-objects\])/AM_INIT_AUTOMAKE([subdir-objects 1.9 tar-ustar])/g' configure.ac
