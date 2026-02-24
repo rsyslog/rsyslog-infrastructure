@@ -1,63 +1,56 @@
 #! /bin/bash
 # Copyright (C) 2015 by Rainer Gerhards. Released under ASL 2.0
-source $RSI_SCRIPTS/config.sh 
+source $RSI_SCRIPTS/config.sh
+
+set -e
 
 # Support custom branch
 GITBRANCH=${1:-"master"}
-echo Get DAILY TARBALL for RSYSLOG branch $GITBRANCH
+echo "Get DAILY TARBALL for libfastjson branch $GITBRANCH"
 
 cd $INFRAHOME/repo/libfastjson
 git reset --hard
 git pull --all
 
-echo pre checkout
-git checkout -f $GITBRANCH
-if [ $? -ne 0 ]; then
-    git checkout master |& mutt -s "libfastjson tarball: git checkout failed!" $RS_NOTIFY_EMAIL
+git checkout -f $GITBRANCH || {
+    git checkout master 2>&1 | mutt -s "libfastjson tarball: git checkout failed!" $RS_NOTIFY_EMAIL
     exit 1
-fi
-echo pre pull
-git pull
-if [ $? -ne 0 ]; then
-    git pull |& mutt -s "libfastjson tarball: git pull failed!" $RS_NOTIFY_EMAIL 
+}
+git pull || {
+    git pull 2>&1 | mutt -s "libfastjson tarball: git pull failed!" $RS_NOTIFY_EMAIL
     exit 1
-fi
+}
 
-# we need to rename the version
-rm *.tar.gz
+# Remove any old tarballs (use -f to avoid error when none exist)
+rm -f *.tar.gz
 
-# we need to rename the version
-sed s/\\.master\]/\\.`git log --pretty=format:'%H' -n 1|cut -c 1-12`\]/ < configure.ac > configure.ac.new
+# Stamp version with git short hash
+COMMIT_HASH=$(git log --pretty=format:'%H' -n 1 | cut -c 1-12)
+sed "s/\\.master\]/\\.${COMMIT_HASH}\]/" configure.ac > configure.ac.new
 mv configure.ac.new configure.ac
 
-autoreconf -fvi && ./configure --prefix=$INFRAHOME/local && make || exit $?
+# Build (library must remain built for make dist - tests/distdir needs libfastjson.la)
+autoreconf -fvi
+./configure --prefix=$INFRAHOME/local
+make
 
-echo trying make dist
-rm -rf *.tar.gz
-
-# Separate clean and dist and use Verbose output
-make clean
-make dist V=1
-#make distclean
-if [ $? -ne 0 ]; then
-    make dist |& mutt -s "libfastjson tarball: make dist failed" $RS_NOTIFY_EMAIL 
+# Create tarball - do NOT run make clean first; distdir in tests/ needs libfastjson.la
+echo "Running make dist..."
+make dist V=1 2>&1 | tee /tmp/libfastjson_dist.log
+if [ ${PIPESTATUS[0]} -ne 0 ]; then
+    mutt -s "libfastjson tarball: make dist failed" $RS_NOTIFY_EMAIL < /tmp/libfastjson_dist.log
     exit 1
 fi
 
-# work-around fix permissions
-# TODO: how to handle script abort? Any way to avoid this work-around here?
+# Fix permissions for shared workspace
 chmod -R g+w .
 chgrp -R infrastructure .
 
-# install in our local build environment
+# Install in our local build environment
 make install
 
-# now update tarball on rsyslog
-TARFILE=`ls *.tar.gz`
-echo tarfile for upload: $TARFILE
-# TODO: we need to copy this file inside the local file system once we
-# know where this will be
-#scp -p $TARFILE download.rsyslog.com:/home/adisconweb/www/wordpress-mu/wp-content/blogs.dir/11/files/download/rsyslog/liblognorm-daily.tar.gz
+TARFILE=$(ls *.tar.gz 2>/dev/null | head -1)
+echo "Tarball for upload: $TARFILE"
 
-# reset version number changes
+# Reset configure.ac to clean state
 git checkout -f $GITBRANCH
