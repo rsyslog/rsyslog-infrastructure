@@ -31,20 +31,21 @@ if [ $? -ne 0 ]; then
     exit 1
 fi
 
-# rm existing archives
-rm *.tar.gz
-
-#autoreconf -vfi
-#./configure
+# rm existing archives (ok if none match)
+rm -f *.tar.gz
 
 # we need to rename the version
 sed -i s/\\.daily\]/\\.`git log --pretty=format:'%H' -n 1|cut -c 1-12`$CUSTOMBUILD\]/g configure.ac
 
 # We need to add tar-ustar to AM_INIT_AUTOMAKE! Fixed error with "tar: file name is too long (max 99)"
+# (No-op on current main: uses tar-pax; kept for older branches.)
 sed -i 's/AM_INIT_AUTOMAKE(\[subdir-objects\])/AM_INIT_AUTOMAKE([subdir-objects 1.9 tar-ustar])/g' configure.ac
 
 echo pre configure
-$RSI_SCRIPTS/rsyslog_configure.sh
+if ! $RSI_SCRIPTS/rsyslog_configure.sh; then
+    echo "rsyslog autoreconf/configure failed" | mutt -s "rsyslog tarball: configure failed" $RS_NOTIFY_EMAIL
+    exit 1
+fi
 
 # work-around fix permissions
 # TODO: how to handle script abort? Any way to avoid this work-around here?
@@ -53,15 +54,11 @@ chgrp -R infrastructure .
 # end work-around
 
 echo trying make dist
-rm -rf *.tar.gz
+rm -f *.tar.gz
 
-# Separate clean and dist and use Verbose output
 make clean
-make dist V=1
-#make distclean
-make dist
-if [ $? -ne 0 ]; then
-    make dist |& mutt -s "rsyslog tarball: make dist failed" $RS_NOTIFY_EMAIL
+if ! make dist V=1 > /tmp/rsyslog_dist.log 2>&1; then
+    mutt -s "rsyslog tarball: make dist failed" $RS_NOTIFY_EMAIL < /tmp/rsyslog_dist.log
     exit 1
 fi
 #
