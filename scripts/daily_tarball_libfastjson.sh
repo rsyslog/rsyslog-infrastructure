@@ -5,7 +5,7 @@ source $RSI_SCRIPTS/config.sh
 set -e
 
 # Support custom branch
-GITBRANCH=${1:-"master"}
+GITBRANCH=${1:-"main"}
 echo "Get DAILY TARBALL for libfastjson branch $GITBRANCH"
 
 cd $INFRAHOME/repo/libfastjson
@@ -13,7 +13,7 @@ git reset --hard
 git pull --all
 
 git checkout -f $GITBRANCH || {
-    git checkout master 2>&1 | mutt -s "libfastjson tarball: git checkout failed!" $RS_NOTIFY_EMAIL
+    git checkout main 2>&1 | mutt -s "libfastjson tarball: git checkout failed!" $RS_NOTIFY_EMAIL
     exit 1
 }
 git pull || {

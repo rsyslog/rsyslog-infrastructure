@@ -3,7 +3,7 @@
 source $RSI_SCRIPTS/config.sh
 
 # Support custom branch
-GITBRANCH=${1:-"master"}
+GITBRANCH=${1:-"main"}
 echo Get DAILY TARBALL for RSYSLOG branch $GITBRANCH
 
 cd $INFRAHOME/repo/librelp
@@ -13,7 +13,7 @@ git pull --all
 echo pre checkout
 git checkout -f $GITBRANCH
 if [ $? -ne 0 ]; then
-    git checkout -f master |& mutt -s "librelp tarball: git checkout failed!" $RS_NOTIY_EMAIL
+    git checkout -f main |& mutt -s "librelp tarball: git checkout failed!" $RS_NOTIY_EMAIL
     exit 1
 fi
 echo pre pull

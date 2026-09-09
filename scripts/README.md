@@ -6,4 +6,4 @@ is more scripts used across several projects.
 Scripts:
 
 daily_tarball*  build the daily source tarballs, based on git
-                master branches
+                main branches

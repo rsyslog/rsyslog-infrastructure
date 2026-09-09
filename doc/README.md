@@ -77,17 +77,17 @@ sudo apt-get install mutt devscripts debhelper dh-autoreconf cdbs
 Daily Builds and/or custom launchpad reposities package builds
 --------------------------------------------------------------
 Run *./scripts/daily_builds.sh* to build all libraries and rsyslog from current
-master branches and publish to launchpad.
+main branches and publish to launchpad.
 the default build settings.
 
 Run *./scripts/daily_builds_project.sh rsyslog* to build only one project
-from *master* branch and publish to default launchpad repository.
+from *main* branch and publish to default launchpad repository.
 
 Run *./scripts/daily_builds_project.sh rsyslog experimental* to build only one project
-from *master* branch and publish to *experimental* launchpad repository.
+from *main* branch and publish to *experimental* launchpad repository.
 
 Run *./scripts/daily_builds_project.sh rsyslog experimental v8-stable* to build only one project
-from *master* branch, use the *v8-stable* debian files and
+from *main* branch, use the *v8-stable* debian files and
 publish to *experimental* launchpad repository.
 
 Run *./scripts/daily_builds_project.sh rsyslog experimental/experimental v8-stable*
