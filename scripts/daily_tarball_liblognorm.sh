@@ -3,7 +3,7 @@
 source $RSI_SCRIPTS/config.sh 
 
 # Support custom branch
-GITBRANCH=${1:-"master"}
+GITBRANCH=${1:-"main"}
 echo Get DAILY TARBALL for RSYSLOG branch $GITBRANCH
 
 cd $INFRAHOME/repo/liblognorm
@@ -13,7 +13,7 @@ git pull --all
 echo pre checkout
 git checkout -f $GITBRANCH
 if [ $? -ne 0 ]; then
-    git checkout -f master |& mutt -s "liblognorm tarball: git checkout failed!" $RS_NOTIFY_EMAIL
+    git checkout -f main |& mutt -s "liblognorm tarball: git checkout failed!" $RS_NOTIFY_EMAIL
     exit 1
 fi
 echo pre pull
